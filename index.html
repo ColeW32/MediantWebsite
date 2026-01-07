@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediant | Digital Yield Engineering</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #030303;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Utilities */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .marquee-wrapper {
+            overflow: hidden;
+            width: 100%;
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
+
+        .marquee-content {
+            display: flex;
+            width: max-content;
+            animation: marquee 60s linear infinite;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.025);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+        }
+
+        .stripe-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+        }
+
+        /* Modern Background Animations */
+        @keyframes drift-splash {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(2%, 2%) scale(1.05); }
+            100% { transform: translate(-1%, 1%) scale(0.98); }
+        }
+
+        @keyframes drift-slow {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(15px, 15px) rotate(2deg); }
+        }
+
+        @keyframes ripple-sweep {
+            0% { transform: scale(0.8) translate(-10%, -10%); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: scale(1.8) translate(5%, 5%); opacity: 0; }
+        }
+
+        @keyframes grid-distort {
+            0%, 100% { transform: scale(1) skew(0deg, 0deg); }
+            50% { transform: scale(1.015) skew(0.2deg, 0.2deg); }
+        }
+
+        .noise-texture {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            opacity: 0.035;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3%3C");
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+</head>
+<body class="antialiased overflow-x-hidden">
+    <div class="noise-texture"></div>
+    <div id="root"></div>
+</body>
+</html>
