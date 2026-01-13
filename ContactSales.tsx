@@ -1,19 +1,53 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ContactSales: React.FC = () => {
+interface ContactSalesProps {
+  prefillEmail?: string;
+}
+
+const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    email: prefillEmail,
     company: '',
     spend: '50k-100k',
     goal: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (prefillEmail) {
+      setFormData(prev => ({ ...prev, email: prefillEmail }));
+    }
+  }, [prefillEmail]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Lead captured via dedicated contact page:', formData);
-    alert('ROI & CPA Engineering Audit request received. Our squad will contact you within 12 hours.');
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/send-contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
+      }
+
+      setIsSubmitted(true);
+    } catch (err) {
+      setError('Something went wrong. Please try emailing us directly at cole@mediant.group');
+      console.error('Error submitting form:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -64,10 +98,18 @@ const ContactSales: React.FC = () => {
             {/* Right: The Form (Mirrored from Pricing) */}
             <div className="relative">
               <div className="glass-card p-10 md:p-14 rounded-[4rem] border-white/10 relative z-10">
-                <h3 className="text-3xl font-black text-white mb-2 tracking-tight">ROI & CPA Audit</h3>
-                <p className="text-slate-500 text-sm mb-10 font-medium italic">Define your CPA targets. We'll engineer the yield.</p>
-                
-                <form onSubmit={handleSubmit} className="space-y-6">
+                {!isSubmitted ? (
+                  <>
+                    <h3 className="text-3xl font-black text-white mb-2 tracking-tight">ROI & CPA Audit</h3>
+                    <p className="text-slate-500 text-sm mb-10 font-medium italic">Define your CPA targets. We'll engineer the yield.</p>
+                    
+                    {error && (
+                      <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                        <p className="text-red-400 text-sm font-medium">{error}</p>
+                      </div>
+                    )}
+                    
+                    <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-2">Full Name</label>
@@ -132,11 +174,58 @@ const ContactSales: React.FC = () => {
 
                   <button 
                     type="submit"
-                    className="w-full bg-white text-black py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-blue-50 transition-all active:scale-95 shadow-2xl"
+                    disabled={isSubmitting}
+                    className="w-full bg-white text-black py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-blue-50 transition-all active:scale-95 shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Initialize Audit
+                    {isSubmitting ? 'Submitting...' : 'Initialize Audit'}
                   </button>
                 </form>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    {/* Success Animation Icon */}
+                    <div className="mb-8 flex justify-center">
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-2xl shadow-green-500/30 animate-[scale-in_0.5s_ease-out]">
+                        <svg className="w-12 h-12 text-white animate-[check-draw_0.6s_ease-out_0.3s_forwards]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Success Message */}
+                    <h3 className="text-3xl md:text-4xl font-black text-white mb-4 tracking-tight">
+                      Request Received!
+                    </h3>
+                    <p className="text-slate-400 text-lg mb-6 max-w-md mx-auto leading-relaxed">
+                      Your ROI & CPA audit request has been submitted successfully.
+                    </p>
+
+                    {/* Info Box */}
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6 mb-8 text-left">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-1">
+                          <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <h4 className="text-white font-bold text-lg mb-2">What happens next?</h4>
+                          <p className="text-slate-400 text-sm leading-relaxed">
+                            Our growth engineering squad will review your request and reach out within <span className="text-white font-bold">2-3 business days</span> with a custom CPA roadmap tailored to your targets.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Contact Info */}
+                    <div className="text-slate-500 text-sm">
+                      <p className="mb-2">Need immediate assistance?</p>
+                      <a href="mailto:cole@mediant.group" className="text-blue-400 hover:text-blue-300 font-semibold transition-colors">
+                        cole@mediant.group
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Backdrop Glows */}

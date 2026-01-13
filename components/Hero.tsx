@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 
 const partners = [
   "ChatGPT", "Kalshi", "Capital One", "Flo", "Disney+", "Etsy", "Strava", 
@@ -7,10 +7,11 @@ const partners = [
 ];
 
 interface HeroProps {
-  onNavigate?: (page: any) => void;
+  onNavigate?: (page: any, email?: string) => void;
 }
 
 const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
+  const [email, setEmail] = useState('');
   return (
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32">
       <div className="container mx-auto px-6 lg:px-12">
@@ -47,9 +48,11 @@ const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
                   type="email" 
                   placeholder="Email address" 
                   className="bg-transparent border-none text-black text-sm font-medium focus:ring-0 w-48 placeholder-slate-400"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
                 <button 
-                  onClick={() => onNavigate?.('contact-sales')}
+                  onClick={() => onNavigate?.('contact-sales', email)}
                   className="bg-[#0f172a] text-white px-6 py-2.5 rounded-full text-sm font-bold flex items-center group active:scale-95 transition-transform"
                 >
                   Start now

@@ -163,6 +163,7 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive'>('home');
   const [isSolutionsModalOpen, setIsSolutionsModalOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [prefillEmail, setPrefillEmail] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -176,9 +177,12 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
-  const navigateTo = (page: 'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive') => {
+  const navigateTo = (page: 'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive', email?: string) => {
     setCurrentPage(page);
     setIsSolutionsModalOpen(false);
+    if (email && page === 'contact-sales') {
+      setPrefillEmail(email);
+    }
   };
 
   return (
@@ -216,7 +220,7 @@ const App: React.FC = () => {
             ) : currentPage === 'pricing' ? (
               <Pricing />
             ) : currentPage === 'contact-sales' ? (
-              <ContactSales />
+              <ContactSales prefillEmail={prefillEmail} />
             ) : currentPage === 'post-idfa' ? (
               <PostIDFAWhitepaper onNavigate={navigateTo} />
             ) : currentPage === 'creative-velocity-blog' ? (
