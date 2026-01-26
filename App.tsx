@@ -26,6 +26,7 @@ import AttributionMeshDeepDive from './AttributionMeshDeepDive';
 import FreecashArticle from './FreecashArticle';
 import SolutionsModal from './components/SolutionsModal';
 import { PageType, getInitialPage, navigateToPage } from './routes';
+import { updatePageMeta } from './seo-meta';
 
 const HomepageBackground: React.FC<{ scrollY: number }> = ({ scrollY }) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -177,6 +178,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    updatePageMeta(currentPage);
   }, [currentPage]);
 
   // Set initial history state on mount
