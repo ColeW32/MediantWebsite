@@ -6,6 +6,7 @@ interface ContactSalesProps {
 }
 
 const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
+  const [formType, setFormType] = useState<'advertiser' | 'publisher'>('advertiser');
   const [formData, setFormData] = useState({
     name: '',
     email: prefillEmail,
@@ -23,6 +24,15 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
     }
   }, [prefillEmail]);
 
+  // Reset spend field when switching form types
+  useEffect(() => {
+    if (formType === 'advertiser') {
+      setFormData(prev => ({ ...prev, spend: '50k-100k' }));
+    } else {
+      setFormData(prev => ({ ...prev, spend: '100k-500k' }));
+    }
+  }, [formType]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -34,7 +44,10 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          formType: formType
+        }),
       });
 
       if (!response.ok) {
@@ -62,11 +75,16 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
                 <span className="text-blue-400 text-xs font-bold tracking-[0.2em] uppercase">Partnership Inquiry</span>
               </div>
               <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[0.9] mb-8">
-                Initialize your <br/>
-                <span className="text-blue-500 italic">yield audit.</span>
+                {formType === 'advertiser' ? (
+                  <>Initialize your <br/><span className="text-blue-500 italic">yield audit.</span></>
+                ) : (
+                  <>Monetize your <br/><span className="text-green-500 italic">traffic.</span></>
+                )}
               </h1>
               <p className="text-slate-400 text-lg md:text-xl font-medium leading-relaxed mb-12">
-                Our squad specializes in high-efficiency budget scaling, delivering surgical ROI against your specific CPA requirements. We engineer every dollar for terminal scale.
+                {formType === 'advertiser' 
+                  ? "Our squad specializes in high-efficiency budget scaling, delivering surgical ROI against your specific CPA requirements. We engineer every dollar for terminal scale."
+                  : "Connect your platform with premium advertisers and unlock new revenue streams. We provide high-quality offer inventory that converts and pays reliably."}
               </p>
 
               <div className="space-y-8">
@@ -78,7 +96,11 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
                   </div>
                   <div>
                     <h4 className="text-white font-bold text-lg mb-1 tracking-tight">Rapid Response</h4>
-                    <p className="text-slate-500 text-sm font-medium">Expect a technical brief from our engineering squad in under 12 hours with a custom CPA roadmap.</p>
+                    <p className="text-slate-500 text-sm font-medium">
+                      {formType === 'advertiser'
+                        ? "Expect a technical brief from our engineering squad in under 12 hours with a custom CPA roadmap."
+                        : "Receive partnership terms and integration details within 12 hours of your application."}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-6">
@@ -88,8 +110,14 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-white font-bold text-lg mb-1 tracking-tight">Budget Optimization</h4>
-                    <p className="text-slate-500 text-sm font-medium">We focus on making the most of your budget, reallocating every cent toward your highest-yield cohorts.</p>
+                    <h4 className="text-white font-bold text-lg mb-1 tracking-tight">
+                      {formType === 'advertiser' ? 'Budget Optimization' : 'Premium Payouts'}
+                    </h4>
+                    <p className="text-slate-500 text-sm font-medium">
+                      {formType === 'advertiser'
+                        ? "We focus on making the most of your budget, reallocating every cent toward your highest-yield cohorts."
+                        : "Access top-tier offers with competitive payouts and reliable payment terms. Maximize your revenue per user."}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -100,8 +128,42 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
               <div className="glass-card p-10 md:p-14 rounded-[4rem] border-white/10 relative z-10">
                 {!isSubmitted ? (
                   <>
-                    <h3 className="text-3xl font-black text-white mb-2 tracking-tight">ROI & CPA Audit</h3>
-                    <p className="text-slate-500 text-sm mb-10 font-medium italic">Define your CPA targets. We'll engineer the yield.</p>
+                    {/* Toggle Switch */}
+                    <div className="flex justify-center mb-8">
+                      <div className="inline-flex bg-white/5 border border-white/10 rounded-full p-1">
+                        <button
+                          type="button"
+                          onClick={() => setFormType('advertiser')}
+                          className={`px-8 py-3 rounded-full text-sm font-bold uppercase tracking-widest transition-all ${
+                            formType === 'advertiser'
+                              ? 'bg-white text-black shadow-lg'
+                              : 'text-white/50 hover:text-white/80'
+                          }`}
+                        >
+                          Advertiser
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFormType('publisher')}
+                          className={`px-8 py-3 rounded-full text-sm font-bold uppercase tracking-widest transition-all ${
+                            formType === 'publisher'
+                              ? 'bg-white text-black shadow-lg'
+                              : 'text-white/50 hover:text-white/80'
+                          }`}
+                        >
+                          Publisher
+                        </button>
+                      </div>
+                    </div>
+
+                    <h3 className="text-3xl font-black text-white mb-2 tracking-tight">
+                      {formType === 'advertiser' ? 'ROI & CPA Audit' : 'Publisher Partnership'}
+                    </h3>
+                    <p className="text-slate-500 text-sm mb-10 font-medium italic">
+                      {formType === 'advertiser' 
+                        ? "Define your CPA targets. We'll engineer the yield."
+                        : "Monetize your traffic with premium advertisers."}
+                    </p>
                     
                     {error && (
                       <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
@@ -148,25 +210,45 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-2">Monthly Spend Target</label>
+                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-2">
+                      {formType === 'advertiser' ? 'Monthly Spend Target' : 'Monthly Active Users'}
+                    </label>
                     <select 
                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:ring-1 focus:ring-blue-500 appearance-none"
                       value={formData.spend}
                       onChange={e => setFormData({...formData, spend: e.target.value})}
                     >
-                      <option value="under-50k">Under $50k</option>
-                      <option value="50k-100k">$50k — $100k</option>
-                      <option value="100k-500k">$100k — $500k</option>
-                      <option value="500k-1m">$500k — $1M</option>
-                      <option value="1m+">$1M+</option>
+                      {formType === 'advertiser' ? (
+                        <>
+                          <option value="under-50k">Under $50k</option>
+                          <option value="50k-100k">$50k — $100k</option>
+                          <option value="100k-500k">$100k — $500k</option>
+                          <option value="500k-1m">$500k — $1M</option>
+                          <option value="1m+">$1M+</option>
+                        </>
+                      ) : (
+                        <>
+                          <option value="under-100k">Under 100k MAU</option>
+                          <option value="100k-500k">100k — 500k MAU</option>
+                          <option value="500k-1m">500k — 1M MAU</option>
+                          <option value="1m-5m">1M — 5M MAU</option>
+                          <option value="5m+">5M+ MAU</option>
+                        </>
+                      )}
                     </select>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-2">Target CPA & Yield Goal</label>
+                    <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-2">
+                      {formType === 'advertiser' 
+                        ? 'Target CPA & Yield Goal' 
+                        : 'Monetization Goals, Expected Traffic, & Top Countries'}
+                    </label>
                     <textarea 
                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder-slate-600 focus:ring-1 focus:ring-blue-500 outline-none h-32 resize-none transition-all"
-                      placeholder="e.g. Scaling retention-focused acquisition while maintaining a $25 blended CPA."
+                      placeholder={formType === 'advertiser'
+                        ? "e.g. Scaling retention-focused acquisition while maintaining a $25 blended CPA."
+                        : "e.g. Looking to monetize 2M daily impressions with rewarded video and offerwall. Primary traffic: US (60%), UK (20%), CA (10%). Goal: $15+ eCPM on engaged users."}
                       value={formData.goal}
                       onChange={e => setFormData({...formData, goal: e.target.value})}
                     ></textarea>
@@ -177,7 +259,11 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
                     disabled={isSubmitting}
                     className="w-full bg-white text-black py-5 rounded-2xl font-black text-lg uppercase tracking-widest hover:bg-blue-50 transition-all active:scale-95 shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? 'Submitting...' : 'Initialize Audit'}
+                    {isSubmitting 
+                      ? 'Submitting...' 
+                      : formType === 'advertiser' 
+                        ? 'Initialize Audit' 
+                        : 'Apply for Partnership'}
                   </button>
                 </form>
                   </>
@@ -197,7 +283,7 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
                       Request Received!
                     </h3>
                     <p className="text-slate-400 text-lg mb-6 max-w-md mx-auto leading-relaxed">
-                      Your ROI & CPA audit request has been submitted successfully.
+                      Your {formType === 'advertiser' ? 'ROI & CPA audit' : 'partnership application'} has been submitted successfully.
                     </p>
 
                     {/* Info Box */}
@@ -211,7 +297,10 @@ const ContactSales: React.FC<ContactSalesProps> = ({ prefillEmail = '' }) => {
                         <div>
                           <h4 className="text-white font-bold text-lg mb-2">What happens next?</h4>
                           <p className="text-slate-400 text-sm leading-relaxed">
-                            Our growth engineering squad will review your request and reach out within <span className="text-white font-bold">2-3 business days</span> with a custom CPA roadmap tailored to your targets.
+                            {formType === 'advertiser' 
+                              ? <>Our growth engineering squad will review your request and reach out within <span className="text-white font-bold">2-3 business days</span> with a custom CPA roadmap tailored to your targets.</>
+                              : <>Our partnerships team will review your application and reach out within <span className="text-white font-bold">2-3 business days</span> with integration details and payout terms.</>
+                            }
                           </p>
                         </div>
                       </div>

@@ -7,12 +7,15 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { name, email, company, spend, goal } = req.body;
+    const { name, email, company, spend, goal, formType } = req.body;
 
     // Validate required fields
     if (!name || !email || !company) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
+
+    const isPublisher = formType === 'publisher';
+    const inquiryType = isPublisher ? 'Publisher Partnership' : 'ROI & CPA Audit';
 
     // Initialize Brevo API client
     const apiInstance = new brevo.TransactionalEmailsApi();
@@ -23,7 +26,7 @@ export default async function handler(req, res) {
 
     // Create the email content
     const sendSmtpEmail = new brevo.SendSmtpEmail();
-    sendSmtpEmail.subject = `New ROI & CPA Audit Request from ${name}`;
+    sendSmtpEmail.subject = `New ${inquiryType} Request from ${name}`;
     sendSmtpEmail.to = [{ email: 'cole@mediant.group', name: 'Cole' }];
     sendSmtpEmail.sender = { 
       name: 'Mediant Contact Form', 
@@ -99,9 +102,14 @@ export default async function handler(req, res) {
       </head>
       <body>
         <div class="header">
-          <h1>🚀 New ROI & CPA Audit Request</h1>
+          <h1>${isPublisher ? '📱 New Publisher Partnership Application' : '🚀 New ROI & CPA Audit Request'}</h1>
         </div>
         <div class="content">
+          <div class="field" style="border-left-color: ${isPublisher ? '#10b981' : '#2563eb'};">
+            <div class="field-label">Inquiry Type</div>
+            <div class="field-value" style="color: ${isPublisher ? '#10b981' : '#2563eb'};">${inquiryType}</div>
+          </div>
+
           <div class="field">
             <div class="field-label">Full Name</div>
             <div class="field-value">${name}</div>
@@ -118,12 +126,12 @@ export default async function handler(req, res) {
           </div>
           
           <div class="field">
-            <div class="field-label">Monthly Spend Target</div>
+            <div class="field-label">${isPublisher ? 'Monthly Active Users' : 'Monthly Spend Target'}</div>
             <div class="field-value">${spend}</div>
           </div>
           
-          <div class="goal-section">
-            <div class="field-label">Target CPA & Yield Goal</div>
+          <div class="goal-section" style="border-left-color: ${isPublisher ? '#10b981' : '#7c3aed'};">
+            <div class="field-label">${isPublisher ? 'Monetization Goals, Expected Traffic, & Top Countries' : 'Target CPA & Yield Goal'}</div>
             <div class="field-value" style="white-space: pre-wrap;">${goal || 'Not provided'}</div>
           </div>
         </div>
