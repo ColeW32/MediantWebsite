@@ -78,6 +78,14 @@ const Resources: React.FC<ResourcesProps> = ({ onNavigate }) => {
 
   const archiveResources = [
     {
+      id: 'freecash-guide',
+      category: "Industry Guide",
+      title: "Where Does Freecash Get Its Ads From?",
+      description: "A complete guide for building competing rewards apps and understanding the offer network ecosystem.",
+      readTime: "18 min",
+      color: "bg-green-600"
+    },
+    {
       id: 'flo-case-study',
       category: "Case Study",
       title: "How Flo Achieved -40% CAC",
@@ -110,6 +118,8 @@ const Resources: React.FC<ResourcesProps> = ({ onNavigate }) => {
       onNavigate('creative-velocity-blog');
     } else if (id === 'yield-index' && onNavigate) {
       onNavigate('yield-index-report');
+    } else if (id === 'freecash-guide' && onNavigate) {
+      onNavigate('freecash-guide');
     } else if (id === 'flo-case-study' && onNavigate) {
       onNavigate('flo-case-study');
     } else if (id === 'tiktok-vs-meta' && onNavigate) {

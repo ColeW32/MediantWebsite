@@ -23,6 +23,7 @@ import YieldIndexReport from './YieldIndexReport';
 import FloCaseStudy from './FloCaseStudy';
 import TikTokVsMeta from './TikTokVsMeta';
 import AttributionMeshDeepDive from './AttributionMeshDeepDive';
+import FreecashArticle from './FreecashArticle';
 import SolutionsModal from './components/SolutionsModal';
 
 const HomepageBackground: React.FC<{ scrollY: number }> = ({ scrollY }) => {
@@ -160,7 +161,7 @@ const HomepageBackground: React.FC<{ scrollY: number }> = ({ scrollY }) => {
 };
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive' | 'freecash-guide'>('home');
   const [isSolutionsModalOpen, setIsSolutionsModalOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [prefillEmail, setPrefillEmail] = useState('');
@@ -177,7 +178,7 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
-  const navigateTo = (page: 'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive', email?: string) => {
+  const navigateTo = (page: 'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive' | 'freecash-guide', email?: string) => {
     setCurrentPage(page);
     setIsSolutionsModalOpen(false);
     if (email && page === 'contact-sales') {
@@ -233,6 +234,8 @@ const App: React.FC = () => {
               <TikTokVsMeta onNavigate={navigateTo} />
             ) : currentPage === 'attribution-deep-dive' ? (
               <AttributionMeshDeepDive onNavigate={navigateTo} />
+            ) : currentPage === 'freecash-guide' ? (
+              <FreecashArticle onNavigate={navigateTo} />
             ) : (
               <Benchmarks onNavigate={navigateTo} />
             )}
