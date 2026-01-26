@@ -25,6 +25,7 @@ import TikTokVsMeta from './TikTokVsMeta';
 import AttributionMeshDeepDive from './AttributionMeshDeepDive';
 import FreecashArticle from './FreecashArticle';
 import SolutionsModal from './components/SolutionsModal';
+import { PageType, getInitialPage, navigateToPage } from './routes';
 
 const HomepageBackground: React.FC<{ scrollY: number }> = ({ scrollY }) => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -161,7 +162,7 @@ const HomepageBackground: React.FC<{ scrollY: number }> = ({ scrollY }) => {
 };
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive' | 'freecash-guide'>('home');
+  const [currentPage, setCurrentPage] = useState<PageType>(getInitialPage());
   const [isSolutionsModalOpen, setIsSolutionsModalOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [prefillEmail, setPrefillEmail] = useState('');
@@ -178,8 +179,34 @@ const App: React.FC = () => {
     window.scrollTo(0, 0);
   }, [currentPage]);
 
-  const navigateTo = (page: 'home' | 'mobile-ua' | 'resources' | 'performance' | 'attribution' | 'lifecycle' | 'creative' | 'brand' | 'pricing' | 'contact-sales' | 'benchmarks' | 'post-idfa' | 'creative-velocity-blog' | 'yield-index-report' | 'flo-case-study' | 'tiktok-vs-meta' | 'attribution-deep-dive' | 'freecash-guide', email?: string) => {
-    setCurrentPage(page);
+  // Set initial history state on mount
+  useEffect(() => {
+    // Replace initial state to include page information
+    const initialPage = getInitialPage();
+    window.history.replaceState({ page: initialPage }, '', window.location.pathname);
+  }, []);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state;
+      if (state && state.page) {
+        setCurrentPage(state.page);
+        if (state.email) {
+          setPrefillEmail(state.email);
+        }
+      } else {
+        setCurrentPage(getInitialPage());
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateTo = (page: PageType, email?: string) => {
+    const result = navigateToPage(page, email);
+    setCurrentPage(result.page);
     setIsSolutionsModalOpen(false);
     if (email && page === 'contact-sales') {
       setPrefillEmail(email);
